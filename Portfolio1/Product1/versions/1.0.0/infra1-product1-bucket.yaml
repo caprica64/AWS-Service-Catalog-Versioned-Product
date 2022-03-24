@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Owner:
+    Description: "Owner name for tagging"
+    Type: String
+    Default: "Unidentified"
+
+  Project:
+    Description: "Owner name for tagging"
+    Type: String
+    Default: "Plan 9"
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      Tags:
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Version"
+          Value: "1.0.0"
+
+
+Outputs:
+  S3BucketSecureURL:
+    Value: !Join 
+      - ''
+      - - 'https://'
+        - !GetAtt 
+          - S3Bucket
+          - DomainName
+    Description: Name of S3 bucket to hold website content

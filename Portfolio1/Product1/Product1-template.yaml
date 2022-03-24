@@ -62,6 +62,11 @@ Parameters:
       - True
       - False
 
+  PortfolioStackName:
+    Description: "Enter the Portfolio stack name"
+    Type: String
+    Default: "Portfolio1"
+    
 Resources:
   Product:
     Type: AWS::ServiceCatalog::CloudFormationProduct
@@ -73,7 +78,7 @@ Resources:
       ProvisioningArtifactParameters: 
         - Description: !Ref VersionDescription
           DisableTemplateValidation: !Ref DisableTemplateValidation
-          Info: { "LoadTemplateFromURL": "https://s3.amazonaws.com/caprica-devtools-templates/infra1-product1-bucket.yaml" }
+          Info: { "LoadTemplateFromURL": "https://s3.amazonaws.com/caprica-devtools-templates/versions/1.0.0/infra1-product1-bucket.yaml" }
           Name: !Ref Version
       ReplaceProvisioningArtifacts: !Ref ReplaceProvisioningArtifacts
       SupportDescription: !Ref SupportDescription
@@ -86,6 +91,15 @@ Resources:
         -
           Key: "Owner"
           Value: !Ref Owner
+  
+  ProductAssociation:
+    Type: AWS::ServiceCatalog::PortfolioProductAssociation
+    Properties: 
+      PortfolioId: {'Fn::ImportValue': !Sub '${PortfolioStackName}-PortfolioId'}
+      ProductId: !Ref Product
+        #SourcePortfolioId: String
+          
+
 
 # Outputs:
 #   PName:

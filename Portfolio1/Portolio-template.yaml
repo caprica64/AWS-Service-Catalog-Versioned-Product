@@ -31,6 +31,12 @@ Resources:
 Outputs:
   PortfolioName:
     Value: !GetAtt Portfolio.PortfolioName
-    Description: "The portfolio name for reuse in product stacks"
+    Description: "The portfolio name for reference"
     Export:
       Name: !Sub "${AWS::StackName}-PortfolioName"
+
+  PortfolioId:
+      Value: !Ref Portfolio
+      Description: "The portfolio Id for reuse in product stacks"
+      Export:
+        Name: !Sub "${AWS::StackName}-PortfolioId"      

@@ -15,7 +15,6 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      #BucketName: !Ref BucketName
       Tags:
         -
           Key: "Owner"
@@ -23,6 +22,10 @@ Resources:
         -
           Key: "Project"
           Value: !Ref Project
+        -
+          Key: "Version"
+          Value: "1.1.0"
+
 
 Outputs:
   S3BucketSecureURL:
