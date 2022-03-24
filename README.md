@@ -1,4 +1,4 @@
-# sharedservicecatalog
+# AWS Shared Service Catalog
 AWS Shared Service catalog
 
 This project is to design an AWS Shared Service Catalog proof of concept where a central Portfolio (DevTools) account has sets of portfolios and products. Those portfolios should be shared with an AWS Organization OU that contains DevOps accounts for projects.
