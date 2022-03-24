@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  ProductName:
+    Description: "Product name"
+    Type: String
+    Default: "Product 1"
+
+  Description:
+    Description: "Product description"
+    Type: String
+    Default: "Product stack of these AWS components ..."
+
+  Distributor:
+    Description: "Template distributor"
+    Type: String
+    Default: "CCoE Team"
+
+  Owner:
+    Description: "Product Owner"
+    Type: String
+    Default: "CCoE Team"
+
+  SupportDescription:
+    Description: "This product is supported by CCoE"
+    Type: String
+    Default: "CCoE Team"
+    
+  SupportEmail:
+    Description: "CCOE support email address"
+    Type: String
+    Default: "ccoe@example.com"    
+
+  SupportUrl:
+    Description: "Support link"
+    Type: String
+    Default: "https://support.local"
+
+  VersionDescription:
+    Description: "Version description"
+    Type: String
+    Default: "This version adds new fixes ..."
+  
+  DisableTemplateValidation:
+    Description: "Disable template validation?"
+    Type: String
+    Default: False
+    AllowedValues:
+      - True
+      - False
+  
+  Version:
+    Description: "Version of the product, i.e 4.2.0-0020"
+    Type: String
+    Default: "0.0.0"
+
+  ReplaceProvisioningArtifacts:
+    Description: "Update product Id over properties changes?"
+    Type: String
+    Default: False
+    AllowedValues:
+      - True
+      - False
+
+Resources:
+  Product:
+    Type: AWS::ServiceCatalog::CloudFormationProduct
+    Properties: 
+      Description: !Ref Description
+      Distributor: !Ref Distributor
+      Name: !Ref ProductName
+      Owner: !Ref Owner
+      ProvisioningArtifactParameters: 
+        - Description: !Ref VersionDescription
+          DisableTemplateValidation: !Ref DisableTemplateValidation
+          Info: { "LoadTemplateFromURL": "https://s3.amazonaws.com/caprica-devtools-templates/infra1-product1-bucket.yaml" }
+          Name: !Ref Version
+      ReplaceProvisioningArtifacts: !Ref ReplaceProvisioningArtifacts
+      SupportDescription: !Ref SupportDescription
+      SupportEmail: !Ref SupportEmail
+      SupportUrl: !Ref SupportUrl
+      Tags: 
+        -
+          Key: "Project"
+          Value: "Shared Service Catalog"
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+# Outputs:
+#   PName:
+#     Value: !GetAtt Portfolio.PortfolioName
+#     Description: "The portfolio name for reuse in product stacks"
+#     Export:
+#       Name: !Sub "${AWS::StackName}-PortfolioName"
