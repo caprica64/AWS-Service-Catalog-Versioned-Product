@@ -27,3 +27,10 @@ Resources:
         -
           Key: "Project"
           Value: "Shared Service Catalog"
+
+Outputs:
+  PortfolioName:
+    Value: !GetAtt Portfolio.PortfolioName
+    Description: "The portfolio name for reuse in product stacks"
+    Export:
+      Name: !Sub "${AWS::StackName}-PortfolioName"
