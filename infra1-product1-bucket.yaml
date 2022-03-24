@@ -1,14 +1,21 @@
 AWSTemplateFormatVersion: 2010-09-09
-Parameters
-  BucketName:
-    Description: "Name of the S3 bucket"
+
+Parameters:
+  Owner:
+    Description: "Owner name for taggin"
     Type: String
+    Default: "Unidentified"
 
 Resources:
   S3Bucket:
-    Type: 'AWS::S3::Bucket'
-    Properties: !Ref BucketName
-	
+    Type: AWS::S3::Bucket
+    Properties:
+      #BucketName: !Ref BucketName
+      Tags:
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
 Outputs:
   S3BucketSecureURL:
     Value: !Join 
