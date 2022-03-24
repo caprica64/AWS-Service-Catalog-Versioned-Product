@@ -2,9 +2,14 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
   Owner:
-    Description: "Owner name for taggin"
+    Description: "Owner name for tagging"
     Type: String
     Default: "Unidentified"
+
+  Project:
+    Description: "Owner name for tagging"
+    Type: String
+    Default: "Plan 9"
 
 Resources:
   S3Bucket:
@@ -15,6 +20,9 @@ Resources:
         -
           Key: "Owner"
           Value: !Ref Owner
+        -
+          Key: "Project"
+          Value: !Ref Project
 
 Outputs:
   S3BucketSecureURL:
