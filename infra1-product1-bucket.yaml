@@ -1,8 +1,14 @@
 AWSTemplateFormatVersion: 2010-09-09
+Parameters
+  BucketName:
+    Description: "Name of the S3 bucket"
+    Type: String
+
 Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
-
+    Properties: !Ref BucketName
+	
 Outputs:
   S3BucketSecureURL:
     Value: !Join 
