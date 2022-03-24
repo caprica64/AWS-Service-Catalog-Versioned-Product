@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  DisplayName:
+    Description: "Portfolio name"
+    Type: String
+    Default: "Portfolio 1"
+
+  Description:
+    Description: "Portfolio description"
+    Type: String
+    Default: "Portfolio 1 used to hold products ..."
+
+  Provider:
+    Description: "Template provider"
+    Type: String
+    Default: "CCoE Team"
+
+Resources:
+  Portfolio:
+    Type: AWS::ServiceCatalog::Portfolio
+    Properties:
+      Description: String
+      DisplayName: String
+      ProviderName: String
+      Tags: 
+        -
+          Key: "Project"
+          Value: "Shared Service Catalog"
