@@ -1,13 +1,19 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
+  
+  #########################
+  ## Product Information ##
+  #########################
   ProductName:
     Description: "Product name"
     Type: String
-    Default: "Product 1"
+    Default: "Product1"
+    AllowedPattern: ^[a-zA-Z0-9]*$
+    ConstraintDescription: "Alfanumeric values, no space allowed"
 
   Description:
-    Description: "Product description"
+    Description: "Product description goes here"
     Type: String
     Default: "Product stack of these AWS components ..."
 
@@ -66,8 +72,17 @@ Parameters:
     Description: "Enter the Portfolio stack name"
     Type: String
     Default: "Portfolio1"
-    
+
+  ############################
+  ## Repository Information ##
+  ############################
+
+
 Resources:
+  
+  ########################
+  ## Product components ##
+  ########################
   Product:
     Type: AWS::ServiceCatalog::CloudFormationProduct
     Properties: 
@@ -99,6 +114,17 @@ Resources:
       ProductId: !Ref Product
         #SourcePortfolioId: String
           
+
+  ######################################
+  ## CodeCommit Repository components ##
+  ######################################
+  ProductRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: !Ref ProductName
+      RepositoryDescription: !Ref Description
+    #UpdateReplacePolicy: Retain
+    #DeletionPolicy: Retain
 
 
 # Outputs:
