@@ -52,7 +52,7 @@ Parameters:
   Version:
     Description: "Version of the product, i.e 4.2.0-0020"
     Type: String
-    Default: "0.0.0"
+    Default: "1.0.0"
 
   ReplaceProvisioningArtifacts:
     Description: "Update product Id over properties changes?"

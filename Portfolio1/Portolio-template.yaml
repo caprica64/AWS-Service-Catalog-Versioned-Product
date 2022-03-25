@@ -20,9 +20,9 @@ Resources:
   Portfolio:
     Type: AWS::ServiceCatalog::Portfolio
     Properties:
-      Description: String
-      DisplayName: String
-      ProviderName: String
+      Description: !Ref Description
+      DisplayName: !Ref DisplayName
+      ProviderName: !Ref Provider
       Tags: 
         -
           Key: "Project"
