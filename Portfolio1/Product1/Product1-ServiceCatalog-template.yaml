@@ -170,6 +170,23 @@ Resources:
             Effect: Allow
             Resource:
               - "*"
+          - Sid: "TestTemp"
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+              - cloudformation:UpdateStack
+              - cloudformation:CreateChangeSet
+              - cloudformation:DeleteChangeSet
+              - cloudformation:DescribeChangeSet
+              - cloudformation:ExecuteChangeSet
+              - cloudformation:SetStackPolicy
+              - cloudformation:ValidateTemplate              
+            Effect: Allow
+            Resource:
+              - "*"              
+              
+              
         Version: "2012-10-17"
       PolicyName: !Join ["-",[!Ref PortfolioStackName,!Ref ProductName,"CodePipelinePolicy"]]
       Roles:
@@ -221,35 +238,21 @@ Resources:
               - Name: ProductTemplate
             ## Placeholder for configuration
             Configuration: 
-              TemplateFilePath: product.yaml
-              ProductVersionName: !Ref Version
-              ProductType: "CLOUD_FORMATION_TEMPLATE"
-              ProductVersionDescription: !Ref Description
+              ConfigurationFilePath: "config.json" 
+              ### Reference below to build this information direct in CodePipeline. Reason is to be able to update product version at the same time the product content is updated.
+              # TemplateFilePath: product.yaml
+              # ProductVersionName: !Ref Version
+              # ProductType: "CLOUD_FORMATION_TEMPLATE"
+              # ProductVersionDescription: !Ref Description
               ProductId: !Ref Product              
             RunOrder: 1
             Name: "DeployProductUpdate"
           Name: "DeployStage"
-             
-              
-              
+          #    
       ArtifactStore:
         # EncryptionKey:
         #   Id:
-        #     Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputKmsKeyArn"
+        #     Fn::ImportValue: !Sub "${KeyStackName}:ExportsKmsKeyArn"
         #   Type: KMS
         Location: "caprica-devtools-templates"
-        #  Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputRefDevtoolsBucket"
         Type: S3
-  #   DependsOn:
-  #     - PipelineRoleDefaultPolicy
-  #     - PipelineServiceRole
-
-
-
-
-# Outputs:
-#   PName:
-#     Value: !GetAtt Portfolio.PortfolioName
-#     Description: "The portfolio name for reuse in product stacks"
-#     Export:
-#       Name: !Sub "${AWS::StackName}-PortfolioName"
