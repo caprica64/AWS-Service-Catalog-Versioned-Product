@@ -93,7 +93,7 @@ Resources:
       ProvisioningArtifactParameters: 
         - Description: !Ref VersionDescription
           DisableTemplateValidation: !Ref DisableTemplateValidation
-          Info: { "LoadTemplateFromURL": "https://s3.amazonaws.com/caprica-devtools-templates/versions/1.0.0/infra1-product1-bucket.yaml" }
+          Info: { "LoadTemplateFromURL": "https://s3.amazonaws.com/caprica-devtools-templates/product.yaml" }
           Name: !Ref Version
       ReplaceProvisioningArtifacts: !Ref ReplaceProvisioningArtifacts
       SupportDescription: !Ref SupportDescription
