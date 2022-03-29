@@ -121,7 +121,7 @@ Resources:
   ProductRepository:
     Type: AWS::CodeCommit::Repository
     Properties:
-      RepositoryName: !Ref ProductName
+      RepositoryName: !Join ["-",[!Ref PortfolioStackName,!Ref ProductName,"Repository"]]
       RepositoryDescription: !Ref Description
     #UpdateReplacePolicy: Retain
     #DeletionPolicy: Retain
@@ -148,7 +148,8 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
-          - Action:
+          - Sid: "ServiceCatalog"
+            Action:
               - servicecatalog:ListProvisioningArtifacts
               - servicecatalog:CreateProvisioningArtifact
               - servicecatalog:DescribeProvisioningArtifact
@@ -157,134 +158,88 @@ Resources:
             Effect: Allow
             Resource:
               - "*"
+          - Sid: "CodeCommit"
+            Action:
+              - codecommit:*
+            Effect: Allow
+            Resource:
+              - "*"
+          - Sid: "S3Bucket"
+            Action:
+              - s3:*
+            Effect: Allow
+            Resource:
+              - "*"
         Version: "2012-10-17"
       PolicyName: !Join ["-",[!Ref PortfolioStackName,!Ref ProductName,"CodePipelinePolicy"]]
       Roles:
         - Ref: CodePipelineRole
   
-  # Pipeline:
-  #   Type: AWS::CodePipeline::Pipeline
-  #   Properties:
-  #     Name: !Ref ProductName
-  #     RoleArn:
-  #       Fn::GetAtt:
-  #         - PipelineServiceRole
-  #         - Arn
-  #     Stages:
-  #       #-----------------------------------------------------------------------------#
-  #       # Source
-  #       #-----------------------------------------------------------------------------#
-  #       - Actions:
-  #           - ActionTypeId:
-  #               Category: Source
-  #               Owner: AWS
-  #               Provider: CodeCommit
-  #               Version: "1"
-  #             Configuration:
-  #               RepositoryName: !Sub ${ServiceName}-web
-  #               BranchName: !Ref BranchName
-  #               PollForSourceChanges: true
-  #             Name: CodeCommit
-  #             Namespace: "SourceVariables"
-  #             OutputArtifacts:
-  #               - Name: source
-  #             RoleArn:
-  #               Fn::GetAtt:
-  #                 - SourceCodeCommitCodePipelineActionRole
-  #                 - Arn
-  #             RunOrder: 1
-  #         Name: Source
-  #       #-----------------------------------------------------------------------------#
-  #       # Build
-  #       #-----------------------------------------------------------------------------#  
-  #       - Actions:
-  #           - ActionTypeId:
-  #               Category: Build
-  #               Owner: AWS
-  #               Provider: CodeBuild
-  #               Version: "1"
-  #             Configuration:
-  #               ProjectName:
-  #                 Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputRefDockerBuildProject"
-  #               EnvironmentVariables: !Sub |
-  #                 [
-  #                   {
-  #                     "name":"ServiceName",
-  #                     "value":"${ServiceName}",
-  #                     "type":"PLAINTEXT"
-  #                   },
-  #                   {
-  #                     "name":"BranchName",
-  #                     "value":"${BranchName}",
-  #                     "type":"PLAINTEXT"
-  #                   },
-  #                   {
-  #                     "name":"GitCommitID",
-  #                     "value":"#{SourceVariables.CommitId}",
-  #                     "type":"PLAINTEXT"
-  #                   }
-  #                 ]  
-  #             InputArtifacts:
-  #               - Name: source
-  #             Name: CodeBuild
-  #             OutputArtifacts:
-  #               - Name: Artifact_Build_CodeBuild
-  #             RoleArn:
-  #               Fn::GetAtt:
-  #                 - BuildCodeBuildCodePipelineActionRole
-  #                 - Arn
-  #             RunOrder: 1
-  #         Name: Build
-  #       #-----------------------------------------------------------------------------#
-  #       # Deploy
-  #       #-----------------------------------------------------------------------------#
-  #       - !If
-  #         - ManualApproval
-  #         - Name: Manual_Approval
-  #           Actions:
-  #             - Name: Approve
-  #               ActionTypeId:
-  #                 Category: Approval
-  #                 Owner: AWS
-  #                 Provider: Manual
-  #                 Version: "1"
-  #               Configuration:
-  #                   CustomData: "Waiting manual approval..."
-  #                   NotificationArn: !Ref SNSTopic
-  #               RoleArn:
-  #                 Fn::GetAtt:
-  #                   - ManualApprovalApproveCodePipelineActionRole
-  #                   - Arn
-  #               RunOrder: 1
-  #         - !Ref AWS::NoValue
-  # 
-  #       - !If
-  #         - DevBranch
-  #         - Name: Deploy_To_Dev_ECS 
-  #           Actions:
-  #             - ActionTypeId:
-  #                 Category: Deploy
-  #                 Owner: AWS
-  #                 Provider: ECS
-  #                 Version: "1"
-  #               Configuration:
-  #                 ClusterName: !Ref ClusterName
-  #                 ServiceName: !Sub "${ServiceName}-ecs-service"
-  #               InputArtifacts:
-  #                 - Name: Artifact_Build_CodeBuild
-  #               Name: ECS_Deploy_Action
-  #               RoleArn: !Sub arn:${AWS::Partition}:iam::${DevAccountId}:role/CrossAccount_Role
-  #               RunOrder: 1
-  #         - !Ref AWS::NoValue
-  # 
-  #     ArtifactStore:
-  #       EncryptionKey:
-  #         Id:
-  #           Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputKmsKeyArn"
-  #         Type: KMS
-  #       Location:
-  #         Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputRefDevtoolsBucket"
-  #       Type: S3
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Join ["-",[!Ref PortfolioStackName,!Ref ProductName,"Pipeline"]]
+      RoleArn:
+        Fn::GetAtt:
+          - CodePipelineRole
+          - Arn
+      Stages:
+        #-----------------#
+        # Source
+        #-----------------#
+        - Actions:
+          - ActionTypeId:
+              Category: Source
+              Owner: AWS
+              Provider: CodeCommit
+              Version: "1"
+            Configuration:
+              RepositoryName: !Join ["-",[!Ref PortfolioStackName,!Ref ProductName,"Repository"]]
+              BranchName: main
+              PollForSourceChanges: true
+            Name: CodeCommit
+            Namespace: "SourceVariables"
+            OutputArtifacts:
+              - Name: ProductTemplate
+            # RoleArn:
+            #   Fn::GetAtt:
+            #     - SourceCodeCommitCodePipelineActionRole
+            #     - Arn
+            RunOrder: 1
+          Name: "SourceStage"
+  
+        #-----------------#
+        # Deploy
+        #-----------------#
+        - Actions:
+          - ActionTypeId:
+              Category: Deploy
+              Owner: AWS
+              Provider: ServiceCatalog
+              Version: "1"
+            InputArtifacts:
+              - Name: ProductTemplate
+            ## Placeholder for configuration
+            Configuration: 
+              TemplateFilePath: product.yaml
+              ProductVersionName: !Ref Version
+              ProductType: "CLOUD_FORMATION_TEMPLATE"
+              ProductVersionDescription: !Ref Description
+              ProductId: !Ref Product              
+            RunOrder: 1
+            Name: "DeployProductUpdate"
+          Name: "DeployStage"
+             
+              
+              
+      ArtifactStore:
+        # EncryptionKey:
+        #   Id:
+        #     Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputKmsKeyArn"
+        #   Type: KMS
+        Location: "caprica-devtools-templates"
+        #  Fn::ImportValue: !Sub "${ServiceName}:ExportsOutputRefDevtoolsBucket"
+        Type: S3
   #   DependsOn:
   #     - PipelineRoleDefaultPolicy
   #     - PipelineServiceRole
