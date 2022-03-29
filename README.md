@@ -55,3 +55,4 @@ To test an update, go ahead and update both the Tag parameters in the S3 product
 Go back to the Service Catalog product list and you should see the new version listed now. You can try going back to the launched product list and request an updated version. The new template should be installed and you should see the new tag value on the bucket properties.
 
 
+<img width="1324" alt="Screenshot 2022-03-29 at 18 50 34" src="https://user-images.githubusercontent.com/63541433/160713150-7b863bcb-3ae7-48be-a0e1-edf2fac26e76.png">
